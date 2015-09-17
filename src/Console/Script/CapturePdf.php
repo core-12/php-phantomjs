@@ -140,30 +140,9 @@ class CapturePdf extends Capture
     }
 
     /**
-     * @return string
+     * @return null|string
      */
-    public function compile()
-    {
-        $script = <<<SCRIPT
-            var system = require('system'),
-                page   = require('webpage').create();
-
-            page.paperSize = {$this->getPaperSize()};
-            page.open('{$this->getUrl()}', function(status) {
-                if (status) {
-                    page.render('{$this->getOutputFile()}');
-                }
-                phantom.exit();
-            });
-SCRIPT;
-        return $script;
-
-    }
-
-    /**
-     * @return string
-     */
-    protected function getPaperSize()
+    protected function compileVariablesOptions()
     {
         $paperSize = [
             'orientation' => $this->getOrientation(),
@@ -177,6 +156,8 @@ SCRIPT;
             unset($paperSize['format']);
         }
 
-        return json_encode($paperSize);
+        $script = parent::compileVariablesOptions();
+        $script.= 'page.paperSize = ' . json_encode($paperSize) . ';' . PHP_EOL;
+        return $script;
     }
 }

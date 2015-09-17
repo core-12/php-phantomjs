@@ -52,8 +52,8 @@ abstract class Script implements ScriptInterface
     protected function createOutput($output, $errors)
     {
         return [
-            'output' => $output,
-            'errors' => $errors
+            'output' => $this->parseOutput($output),
+            'errors' => $this->parseOutput($errors)
         ];
     }
 
@@ -93,5 +93,18 @@ abstract class Script implements ScriptInterface
         if (is_file($path)) {
             unlink($path);
         }
+    }
+
+    /**
+     * @param $output
+     * @return mixed
+     */
+    protected function parseOutput($output)
+    {
+        if (substr($output, 0, 1) === '{' || substr($output, 0, 1) === '[') {
+            return json_decode($output, true);
+        }
+
+        return $output;
     }
 }
