@@ -146,9 +146,12 @@ class CapturePdf extends Capture
     {
         $paperSize = [
             'orientation' => $this->getOrientation(),
-            'format' => $this->getFormat(),
-            'margin' => $this->getMargin()
+            'format' => $this->getFormat()
         ];
+
+        if ($margin = $this->getMargin()) {
+            $paperSize['margin'] = $margin;
+        }
 
         if ($this->getWidth() && $this->getHeight()) {
             $paperSize['width']  = $this->getWidth();
