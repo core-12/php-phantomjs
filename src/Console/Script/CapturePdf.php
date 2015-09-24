@@ -38,6 +38,18 @@ class CapturePdf extends Capture
 
 
     /**
+     * @return string
+     */
+    public function getOutputFile()
+    {
+        if (!$outputFile = parent::getOutputFile()) {
+            $outputFile = sys_get_temp_dir() . '/' . uniqid('phj_') . '.pdf';
+        }
+
+        return $outputFile;
+    }
+
+    /**
      * @param $width
      * @param $height
      * @return $this
