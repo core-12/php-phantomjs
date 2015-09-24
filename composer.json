@@ -1,9 +1,8 @@
 {
   "name": "core-12/php-phantomjs",
   "type": "library",
-  "description": "PHP M3U playlist generator",
+  "description": "PHP wrapper for PhantomJS",
   "keywords": ["m3u8", "m3u", "hls", "core12"],
-  "minimum-stability": "stable",
   "license": "MIT",
 
   "authors": [
