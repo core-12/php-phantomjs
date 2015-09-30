@@ -44,6 +44,7 @@ class CapturePdf extends Capture
     {
         if (!$outputFile = parent::getOutputFile()) {
             $outputFile = sys_get_temp_dir() . '/' . uniqid('phj_') . '.pdf';
+            $this->setOutputFile($outputFile);
         }
 
         return $outputFile;
