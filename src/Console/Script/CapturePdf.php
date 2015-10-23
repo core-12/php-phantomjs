@@ -36,6 +36,16 @@ class CapturePdf extends Capture
     private $format =  self::FORMAT_A4;
     private $margin;
 
+    /**
+     * @var array
+     */
+    private $header;
+
+    /**
+     * @var array
+     */
+    private $footer;
+
 
     /**
      * @return string
@@ -153,6 +163,51 @@ class CapturePdf extends Capture
     }
 
     /**
+     * @return array
+     */
+    public function getHeader()
+    {
+        return $this->header;
+    }
+
+    /**
+     * @param $content
+     * @param string $height
+     * @return $this
+     */
+    public function setHeader($content, $height = '1cm')
+    {
+        $this->header = [
+            'height' => $height,
+            'contents' => 'phantom.callback(function(pageNum, numPages) { return ' . str_replace('"', '\'', $content) . '; })'
+        ];
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getFooter()
+    {
+        return $this->footer;
+    }
+
+    /**
+     * @param $content
+     * @param string $height
+     * @return $this
+     */
+    public function setFooter($content, $height = '1cm')
+    {
+        $this->footer = [
+            'height' => $height,
+            'contents' => 'phantom.callback(function(pageNum, numPages) { return ' . str_replace('"', '\'', $content) . '; })'
+        ];
+        return $this;
+    }
+
+
+    /**
      * @return null|string
      */
     protected function compileVariablesOptions()
@@ -172,8 +227,29 @@ class CapturePdf extends Capture
             unset($paperSize['format']);
         }
 
+        $indents = '    ';
         $script = parent::compileVariablesOptions();
-        $script.= 'page.paperSize = ' . json_encode($paperSize) . ';' . PHP_EOL;
+        $script.= 'page.paperSize = {' . PHP_EOL;
+
+        foreach ($paperSize as $key => $value) {
+            $script.= $indents . $key . ': ' . (is_scalar($value) ? '"' . $value . '"' : json_encode($value)) . ',' . PHP_EOL;
+        }
+
+        if ($header = $this->getHeader()) {
+            $script.= $indents . 'header: {' . PHP_EOL;
+            $script.= $indents . $indents . 'height: "' . $header['height'] . '",' . PHP_EOL;
+            $script.= $indents . $indents . 'contents: ' . $header['contents'] . PHP_EOL;
+            $script.= $indents . '},' . PHP_EOL;
+        }
+
+        if ($footer = $this->getFooter()) {
+            $script.= $indents . 'footer: {' . PHP_EOL;
+            $script.= $indents . $indents . 'height: "' . $footer['height'] . '",' . PHP_EOL;
+            $script.= $indents . $indents . 'contents: ' . $footer['contents'] . PHP_EOL;
+            $script.= $indents . '},' . PHP_EOL;
+        }
+
+        $script.= '};' . PHP_EOL;
         return $script;
     }
 }
